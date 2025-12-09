@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UnblockedHub</title>
+    <link rel="icon" href="logo.png">
+    <link rel="manifest" href="manifest.json"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            display: flex;
+            gap: 10px;
+        }
+
+        .spinner div {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            animation: spin 1s infinite ease-in-out;
+        }
+
+        .spinner div:nth-child(1) { background: white; animation-delay: 0s; }
+        .spinner div:nth-child(2) { background: #888; animation-delay: 0.2s; }
+        .spinner div:nth-child(3) { background: white; animation-delay: 0.4s; }
+        .spinner div:nth-child(4) { background: #888; animation-delay: 0.6s; }
+
+        @keyframes spin {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Header */
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: #000;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .headericons {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            margin-right: 15px;
+            filter: invert(1);
+        }
+
+        .right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Main Container */
+        #mainContainer {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 110px);
+            overflow-y: auto;
+        }
+
+        /* Home Content */
+        #homeContent {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        #maintitle {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        .quickapps {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            margin: 10px;
+            cursor: pointer;
+            border: 2px solid #333;
+            transition: transform 0.3s;
+        }
+
+        .quickapps:hover {
+            transform: scale(1.1);
+            border-color: white;
+        }
+
+        /* Search Form */
+        #searchform {
+            margin: 30px auto;
+            max-width: 600px;
+        }
+
+        #searchinput {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #333;
+            border-radius: 25px;
+            background: #111;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        /* Buttons */
+        .section-btn {
+            padding: 12px 25px;
+            background: #111;
+            border: 2px solid #333;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+
+        .section-btn:hover {
+            background: #222;
+            border-color: white;
+        }
+
+        /* Footer */
+        #footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: #000;
+            border-top: 1px solid #333;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        #online {
+            color: #888;
+            font-size: 14px;
+        }
+
+        /* Proxy Frame */
+        #proxyFrameContainer {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 110px);
+            z-index: 900;
+            display: none;
+        }
+
+        #proxyFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        #backBtn {
+            position: fixed;
+            top: 70px;
+            left: 20px;
+            background: #111;
+            color: white;
+            border: 1px solid #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 950;
+            display: none;
+        }
+
+        /* Settings Modal */
+        #settingsModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .settings-box {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .settings-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #333;
+        }
+
+        .settings-category {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .settings-category h3 {
+            margin-bottom: 15px;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0;
+            padding: 10px;
+            background: #111;
+            border-radius: 8px;
+        }
+
+        .setting-label {
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .setting-select {
+            background: #000;
+            color: white;
+            border: 1px solid #333;
+            padding: 8px 15px;
+            border-radius: 6px;
+            min-width: 160px;
+        }
+
+        .setting-checkbox {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+        }
+
+        .setting-btn {
+            background: #222;
+            color: white;
+            border: 1px solid #333;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .setting-btn:hover {
+            background: #333;
+            border-color: white;
+        }
+
+        .theme-option {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            margin: 5px;
+            cursor: pointer;
+            border: 2px solid #333;
+        }
+
+        .theme-option.active {
+            border-color: white;
+            transform: scale(1.1);
+        }
+
+        .theme-black { background: #000; }
+        .theme-white { background: #fff; }
+        .theme-dark { background: #121212; }
+        .theme-blue { background: #0a3d62; }
+        .theme-green { background: #1e3799; }
+        .theme-purple { background: #341f97; }
+
+        /* Game categories */
+        .category-title {
+            font-size: 1.4rem;
+            margin: 25px 0 15px 0;
+            color: white;
+            text-align: left;
+            padding-left: 10px;
+            border-left: 4px solid white;
+        }
+
+        /* Game/App Cards */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .game-card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            border-color: white;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .game-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            object-fit: cover;
+        }
+
+        .game-title {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .game-desc {
+            color: #888;
+            font-size: 13px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Fade Effect */
+        #lowtaperfade {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0));
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .fade-out {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .quickapps {
+                width: 50px;
+                height: 50px;
+                margin: 5px;
+            }
+            
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+            
+            .setting-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .setting-select {
+                margin-top: 8px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="spinner">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <br><br><br>
+        <h1 id="messageforyou">Loading UnblockedHub...</h1>
+        <div id="loadingbar"></div>
+        <div id="dabottom" style="display: none">
+            <h3><a onclick="skipLoading()">skip loading</a></h3>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div id="header">
+        <img class="headericons" src="logo.png" onclick="showHome()" style="transform: scale(1.3);">
+        <div class="right">
+            <img class="headericons" src="https://img.icons8.com/ios/50/ffffff/games-folder.png" onclick="showGames()">
+            <img class="headericons" src="https://img.icons8.com/ios/50/ffffff/apps.png" onclick="showApps()">
+            <img class="headericons" src="https://img.icons8.com/ios/50/ffffff/settings.png" onclick="showSettingsModal()">
+            <img class="headericons" id="userpfp" src="https://img.icons8.com/ios/50/ffffff/user.png" style="border-radius: 100%;">
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContainer">
+        <!-- Home Content -->
+        <div id="homeContent">
+            <h1 id="maintitle">UnblockedHub</h1>
+            
+            <!-- Quick Apps -->
+            <div>
+                <img class="quickapps" src="https://img.icons8.com/color/96/000000/youtube-play.png" 
+                     onclick="openInProxy('https://youtube.com')" title="YouTube">
+                <img class="quickapps" src="https://img.icons8.com/color/96/000000/google-logo.png" 
+                     onclick="openInProxy('https://google.com')" title="Google">
+                <img class="quickapps" src="https://img.icons8.com/color/96/000000/discord-logo.png" 
+                     onclick="openInProxy('https://discord.com')" title="Discord">
+                <img class="quickapps" src="https://img.icons8.com/color/96/000000/tiktok.png" 
+                     onclick="openInProxy('https://tiktok.com')" title="TikTok">
+                <img class="quickapps" src="https://img.icons8.com/color/96/000000/twitch.png" 
+                     onclick="openInProxy('https://twitch.tv')" title="Twitch">
+                <img class="quickapps" src="https://img.icons8.com/color/96/000000/spotify--v1.png" 
+                     onclick="openInProxy('https://spotify.com')" title="Spotify">
+            </div>
+            
+            <br>
+            
+            <!-- Search Form -->
+            <form autocomplete="off" id="searchform" onsubmit="handleSearch(event)">
+                <input autocomplete="false" name="hidden" type="hidden" style="display:none;">
+                <input id="searchinput" type="text" placeholder="Search or enter URL..." class="form__input">
+            </form>
+            
+            <br>
+            
+            <!-- Section Buttons -->
+            <div>
+                <button class="section-btn" onclick="showGames()">🎮 Games</button>
+                <button class="section-btn" onclick="showApps()">📱 Apps</button>
+                <button class="section-btn" onclick="showProxy()">🔒 Proxy</button>
+                <a href="#" onclick="showMessage('Privacy Policy - Coming Soon')" style="color: #888; margin-left: 20px;">privacy policy</a>
+            </div>
+            
+            <!-- Games Grid -->
+            <div id="gamesGrid" style="display: none; margin-top: 30px;">
+                <h2 class="category-title">🎮 Popular Games</h2>
+                <div class="games-grid">
+                    <div class="game-card" onclick="openInProxy('https://poki.com')">
+                        <img src="https://img.icons8.com/color/96/000000/games-folder.png" class="game-icon">
+                        <div class="game-title">Poki Games</div>
+                        <div class="game-desc">Thousands of free games</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://slope-game.online')">
+                        <img src="https://img.icons8.com/color/96/000000/skiing.png" class="game-icon">
+                        <div class="game-title">Slope</div>
+                        <div class="game-desc">3D ball rolling game</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://classic.minecraft.net')">
+                        <img src="https://img.icons8.com/color/96/000000/minecraft-logo.png" class="game-icon">
+                        <div class="game-title">Minecraft</div>
+                        <div class="game-desc">Classic browser version</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://krunker.io')">
+                        <img src="https://img.icons8.com/color/96/000000/gun.png" class="game-icon">
+                        <div class="game-title">Krunker</div>
+                        <div class="game-desc">FPS browser game</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://tetris.com/play-tetris')">
+                        <img src="https://img.icons8.com/color/96/000000/tetris.png" class="game-icon">
+                        <div class="game-title">Tetris</div>
+                        <div class="game-desc">Classic puzzle game</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://chess.com')">
+                        <img src="https://img.icons8.com/color/96/000000/chess.png" class="game-icon">
+                        <div class="game-title">Chess</div>
+                        <div class="game-desc">Strategy board game</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://geometrydash.io')">
+                        <img src="https://img.icons8.com/color/96/000000/diamond.png" class="game-icon">
+                        <div class="game-title">Geometry Dash</div>
+                        <div class="game-desc">Rhythm platformer</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://coolmathgames.com')">
+                        <img src="https://img.icons8.com/color/96/000000/calculator.png" class="game-icon">
+                        <div class="game-title">Cool Math</div>
+                        <div class="game-desc">Educational games</div>
+                    </div>
+                </div>
+                
+                <h2 class="category-title">🏆 More Games</h2>
+                <div class="games-grid">
+                    <div class="game-card" onclick="openInProxy('https://nowgg.nl')">
+                        <img src="https://img.icons8.com/color/96/000000/cloud.png" class="game-icon">
+                        <div class="game-title">Now.gg</div>
+                        <div class="game-desc">Mobile games platform</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://agame.com')">
+                        <img src="https://img.icons8.com/color/96/000000/game-controller.png" class="game-icon">
+                        <div class="game-title">A Game</div>
+                        <div class="game-desc">Free online games</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://crazygames.com')">
+                        <img src="https://img.icons8.com/color/96/000000/fire-element.png" class="game-icon">
+                        <div class="game-title">Crazy Games</div>
+                        <div class="game-desc">Popular games collection</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://y8.com')">
+                        <img src="https://img.icons8.com/color/96/000000/joystick.png" class="game-icon">
+                        <div class="game-title">Y8 Games</div>
+                        <div class="game-desc">Massive games library</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Apps Grid -->
+            <div id="appsGrid" style="display: none; margin-top: 30px;">
+                <h2 class="category-title">📱 Educational Apps</h2>
+                <div class="games-grid">
+                    <div class="game-card" onclick="openInProxy('https://classroom.google.com')">
+                        <img src="https://img.icons8.com/color/96/000000/google-classroom.png" class="game-icon">
+                        <div class="game-title">Classroom</div>
+                        <div class="game-desc">Google Classroom</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://drive.google.com')">
+                        <img src="https://img.icons8.com/color/96/000000/google-drive.png" class="game-icon">
+                        <div class="game-title">Drive</div>
+                        <div class="game-desc">Google Drive</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://khanacademy.org')">
+                        <img src="https://img.icons8.com/color/96/000000/khan-academy.png" class="game-icon">
+                        <div class="game-title">Khan Academy</div>
+                        <div class="game-desc">Free courses</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://quizlet.com')">
+                        <img src="https://img.icons8.com/color/96/000000/flashcards.png" class="game-icon">
+                        <div class="game-title">Quizlet</div>
+                        <div class="game-desc">Study flashcards</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://duolingo.com')">
+                        <img src="https://img.icons8.com/color/96/000000/duolingo.png" class="game-icon">
+                        <div class="game-title">Duolingo</div>
+                        <div class="game-desc">Language learning</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://code.org')">
+                        <img src="https://img.icons8.com/color/96/000000/code.png" class="game-icon">
+                        <div class="game-title">Code.org</div>
+                        <div class="game-desc">Learn coding</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://docs.google.com')">
+                        <img src="https://img.icons8.com/color/96/000000/google-docs.png" class="game-icon">
+                        <div class="game-title">Google Docs</div>
+                        <div class="game-desc">Document editor</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://notion.so')">
+                        <img src="https://img.icons8.com/color/96/000000/notion.png" class="game-icon">
+                        <div class="game-title">Notion</div>
+                        <div class="game-desc">Organization tool</div>
+                    </div>
+                </div>
+                
+                <h2 class="category-title">💻 Other Apps</h2>
+                <div class="games-grid">
+                    <div class="game-card" onclick="openInProxy('https://chat.openai.com')">
+                        <img src="https://img.icons8.com/color/96/000000/chatgpt.png" class="game-icon">
+                        <div class="game-title">ChatGPT</div>
+                        <div class="game-desc">AI Assistant</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://deepseek.com')">
+                        <img src="https://img.icons8.com/color/96/000000/artificial-intelligence.png" class="game-icon">
+                        <div class="game-title">DeepSeek</div>
+                        <div class="game-desc">AI Chat</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://canva.com')">
+                        <img src="https://img.icons8.com/color/96/000000/canva.png" class="game-icon">
+                        <div class="game-title">Canva</div>
+                        <div class="game-desc">Design tool</div>
+                    </div>
+                    <div class="game-card" onclick="openInProxy('https://github.com')">
+                        <img src="https://img.icons8.com/color/96/000000/github.png" class="game-icon">
+                        <div class="game-title">GitHub</div>
+                        <div class="game-desc">Code hosting</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Proxy Input -->
+            <div id="proxyInput" style="display: none; margin-top: 30px;">
+                <h2 style="margin-bottom: 20px; text-align: center;">🔒 Proxy Browser</h2>
+                <form onsubmit="handleProxy(event)" style="max-width: 600px; margin: 0 auto;">
+                    <input id="proxyinput" type="text" placeholder="Enter website URL (e.g., https://example.com)" 
+                           style="width: 100%; padding: 15px; border: 2px solid #333; border-radius: 10px; background: #111; color: white; margin-bottom: 10px;">
+                    <button type="submit" style="width: 100%; padding: 15px; background: #111; border: 2px solid #333; color: white; border-radius: 10px; cursor: pointer;">
+                        <i class="fas fa-external-link-alt"></i> Open in Proxy
+                    </button>
+                </form>
+                <p style="text-align: center; color: #888; margin-top: 20px;">
+                    Enter any website URL to browse securely through our proxy
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proxy Frame -->
+    <div id="proxyFrameContainer">
+        <iframe id="proxyFrame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+    </div>
+
+    <!-- Back Button -->
+    <button id="backBtn" onclick="closeProxy()">← Back to Hub</button>
+
+    <!-- Footer -->
+    <div id="footer">
+        <p id="online">online users: 1</p>
+        <div class="right">
+            <span id="currentEngine" style="color: #888; margin-right: 15px; font-size: 14px;">Google</span>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal">
+        <div class="settings-box">
+            <div class="settings-title">⚙️ Settings</div>
+            
+            <!-- Proxy Settings -->
+            <div class="settings-category">
+                <h3>🔒 Proxy Settings</h3>
+                <div class="setting-row">
+                    <span class="setting-label">Open Method:</span>
+                    <select id="openMethod" class="setting-select">
+                        <option value="embed">Embed in Page</option>
+                        <option value="aboutblank">About:Blank Tab</option>
+                        <option value="newtab">New Tab</option>
+                        <option value="popup">Popup Window</option>
+                    </select>
+                </div>
+                
+                <div class="setting-row">
+                    <span class="setting-label">Search Engine:</span>
+                    <select id="searchEngine" class="setting-select">
+                        <option value="google">Google</option>
+                        <option value="duckduckgo">DuckDuckGo</option>
+                        <option value="bing">Bing</option>
+                        <option value="yahoo">Yahoo</option>
+                        <option value="brave">Brave Search</option>
+                        <option value="startpage">StartPage</option>
+                        <option value="ecosia">Ecosia</option>
+                    </select>
+                </div>
+                
+                <div class="setting-row">
+                    <span class="setting-label">Default Proxy URL:</span>
+                    <input type="text" id="customProxyUrl" class="setting-select" placeholder="Leave empty for default">
+                </div>
+            </div>
+            
+            <!-- Theme Settings -->
+            <div class="settings-category">
+                <h3>🎨 Theme Settings</h3>
+                <div class="setting-row">
+                    <span class="setting-label">Theme Color:</span>
+                    <div>
+                        <div class="theme-option theme-black active" onclick="selectTheme('black')" title="Black"></div>
+                        <div class="theme-option theme-white" onclick="selectTheme('white')" title="White"></div>
+                        <div class="theme-option theme-dark" onclick="selectTheme('dark')" title="Dark"></div>
+                        <div class="theme-option theme-blue" onclick="selectTheme('blue')" title="Blue"></div>
+                        <div class="theme-option theme-green" onclick="selectTheme('green')" title="Green"></div>
+                        <div class="theme-option theme-purple" onclick="selectTheme('purple')" title="Purple"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-row">
+                    <span class="setting-label">Custom Background:</span>
+                    <input type="text" id="customBg" class="setting-select" placeholder="Image URL or leave empty">
+                </div>
+                
+                <div class="setting-row">
+                    <span class="setting-label">Dark Mode:</span>
+                    <input type="checkbox" id="darkMode" class="setting-checkbox" checked>
+                </div>
+            </div>
+            
+            <!-- Display Settings -->
+            <div class="settings-category">
+                <h3>👁️ Display Settings</h3>
+                <div class="setting-row">
+                    <span class="setting-label">Show Quick Apps:</span>
+                    <input type="checkbox" id="showQuickApps" class="setting-checkbox" checked>
+                </div>
+                
+                <div class="setting-row">
+                    <span class="setting-label">Show Online Users:</span>
+                    <input type="checkbox" id="showOnlineUsers" class="setting-checkbox" checked>
+                </div>
+                
+                <div class="setting-row">
+                    <span class="setting-label">Show Game Categories:</span>
+                    <input type="checkbox" id="showCategories" class="setting-checkbox" checked>
+                </div>
+                
+                <div class="setting-row">
+                    <span class="setting-label">Auto-load Games:</span>
+                    <input type="checkbox" id="autoLoadGames" class="setting-checkbox">
+                </div>
+                
+                <div class="setting-row">
+                    <span class="setting-label">Animations:</span>
+                    <select id="animations" class="setting-select">
+                        <option value="all">All Animations</option>
+                        <option value="reduced">Reduced Motion</option>
+                        <option value="none">No Animations</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Privacy Settings -->
+            <div class="settings-category">
+                <h3>🔐 Privacy Settings</h3>
+                <div class="setting-row">
+                    <span class="setting-label">Clear History on Close:</span>
+                    <input type="checkbox" id="clearHistory" class="setting-checkbox">
+                </div>
+                
+                <div class="setting-row">
+                    <span class="setting-label">Block Ads:</span>
+                    <input type="checkbox" id="blockAds" class="setting-checkbox">
+                </div>
+                
+                <div class="setting-row">
+                    <span class="setting-label">Incognito Mode:</span>
+                    <input type="checkbox" id="incognito" class="setting-checkbox">
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="setting-btn" onclick="saveSettings()">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+                <button class="setting-btn" onclick="resetSettings()">
+                    <i class="fas fa-undo"></i> Reset All
+                </button>
+                <button class="setting-btn" onclick="clearAllHistory()">
+                    <i class="fas fa-trash"></i> Clear History
+                </button>
+                <button class="setting-btn" onclick="closeSettingsModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fade -->
+    <div id="lowtaperfade"></div>
+
+    <script>
+        // Settings system
+        const searchEngines = {
+            google: 'https://www.google.com/search?q=',
+            duckduckgo: 'https://duckduckgo.com/?q=',
+            bing: 'https://www.bing.com/search?q=',
+            yahoo: 'https://search.yahoo.com/search?p=',
+            brave: 'https://search.brave.com/search?q=',
+            startpage: 'https://www.startpage.com/do/dsearch?query=',
+            ecosia: 'https://www.ecosia.org/search?q='
+        };
+
+        // Default settings
+        let settings = {
+            openMethod: 'embed',
+            searchEngine: 'google',
+            customProxyUrl: '',
+            theme: 'black',
+            customBg: '',
+            darkMode: true,
+            showQuickApps: true,
+            showOnlineUsers: true,
+            showCategories: true,
+            autoLoadGames: false,
+            animations: 'all',
+            clearHistory: false,
+            blockAds: false,
+            incognito: false
+        };
+
+        // Load settings from localStorage
+        function loadSettings() {
+            const saved = localStorage.getItem('unblockedhub_settings');
+            if (saved) {
+                settings = JSON.parse(saved);
+            }
+            applySettings();
+        }
+
+        // Apply settings to UI
+        function applySettings() {
+            // Update form controls
+            document.getElementById('openMethod').value = settings.openMethod;
+            document.getElementById('searchEngine').value = settings.searchEngine;
+            document.getElementById('customProxyUrl').value = settings.customProxyUrl;
+            document.getElementById('customBg').value = settings.customBg;
+            document.getElementById('darkMode').checked = settings.darkMode;
+            document.getElementById('showQuickApps').checked = settings.showQuickApps;
+            document.getElementById('showOnlineUsers').checked = settings.showOnlineUsers;
+            document.getElementById('showCategories').checked = settings.showCategories;
+            document.getElementById('autoLoadGames').checked = settings.autoLoadGames;
+            document.getElementById('animations').value = settings.animations;
+            document.getElementById('clearHistory').checked = settings.clearHistory;
+            document.getElementById('blockAds').checked = settings.blockAds;
+            document.getElementById('incognito').checked = settings.incognito;
+            
+            // Update theme selection
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            document.querySelector(`.theme-${settings.theme}`).classList.add('active');
+            
+            // Apply theme to body
+            document.body.classList.remove('theme-black', 'theme-white', 'theme-dark', 'theme-blue', 'theme-green', 'theme-purple');
+            document.body.classList.add(`theme-${settings.theme}`);
+            
+            // Apply dark mode
+            if (settings.darkMode) {
+                document.body.style.backgroundColor = '#000';
+                document.body.style.color = '#fff';
+            } else {
+                document.body.style.backgroundColor = '#fff';
+                document.body.style.color = '#000';
+            }
+            
+            // Apply custom background
+            if (settings.customBg) {
+                document.body.style.backgroundImage = `url('${settings.customBg}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundAttachment = 'fixed';
+            } else {
+                document.body.style.backgroundImage = '';
+            }
+            
+            // Show/hide quick apps
+            if (!settings.showQuickApps) {
+                document.querySelectorAll('.quickapps').forEach(app => {
+                    app.style.display = 'none';
+                });
+            } else {
+                document.querySelectorAll('.quickapps').forEach(app => {
+                    app.style.display = 'inline-block';
+                });
+            }
+            
+            // Show/hide online users
+            document.getElementById('online').style.display = settings.showOnlineUsers ? 'block' : 'none';
+            
+            // Update footer
+            document.getElementById('currentEngine').textContent = 
+                settings.searchEngine.charAt(0).toUpperCase() + settings.searchEngine.slice(1);
+            
+            // Apply animations
+            if (settings.animations === 'reduced') {
+                document.documentElement.style.setProperty('--animation-speed', '0.5s');
+            } else if (settings.animations === 'none') {
+                document.documentElement.style.setProperty('--animation-speed', '0s');
+            }
+        }
+
+        // Select theme
+        function selectTheme(theme) {
+            settings.theme = theme;
+            applySettings();
+        }
+
+        // Save settings
+        function saveSettings() {
+            settings.openMethod = document.getElementById('openMethod').value;
+            settings.searchEngine = document.getElementById('searchEngine').value;
+            settings.customProxyUrl = document.getElementById('customProxyUrl').value;
+            settings.customBg = document.getElementById('customBg').value;
+            settings.darkMode = document.getElementById('darkMode').checked;
+            settings.showQuickApps = document.getElementById('showQuickApps').checked;
+            settings.showOnlineUsers = document.getElementById('showOnlineUsers').checked;
+            settings.showCategories = document.getElementById('showCategories').checked;
+            settings.autoLoadGames = document.getElementById('autoLoadGames').checked;
+            settings.animations = document.getElementById('animations').value;
+            settings.clearHistory = document.getElementById('clearHistory').checked;
+            settings.blockAds = document.getElementById('blockAds').checked;
+            settings.incognito = document.getElementById('incognito').checked;
+            
+            localStorage.setItem('unblockedhub_settings', JSON.stringify(settings));
+            applySettings();
+            showMessage('Settings saved successfully!');
+            closeSettingsModal();
+        }
+
+        // Reset all settings
+        function resetSettings() {
+            if (confirm('Reset all settings to default?')) {
+                settings = {
+                    openMethod: 'embed',
+                    searchEngine: 'google',
+                    customProxyUrl: '',
+                    theme: 'black',
+                    customBg: '',
+                    darkMode: true,
+                    showQuickApps: true,
+                    showOnlineUsers: true,
+                    showCategories: true,
+                    autoLoadGames: false,
+                    animations: 'all',
+                    clearHistory: false,
+                    blockAds: false,
+                    incognito: false
+                };
+                localStorage.removeItem('unblockedhub_settings');
+                applySettings();
+                showMessage('All settings reset to default!');
+            }
+        }
+
+        // Clear history
+        function clearAllHistory() {
+            if (confirm('Clear all browsing history and cache?')) {
+                sessionStorage.clear();
+                localStorage.removeItem('proxy_history');
+                showMessage('All history cleared!');
+            }
+        }
+
+        // Open URL in proxy
+        function openInProxy(url) {
+            if (!url) return;
+            
+            // Add https:// if not present
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            
+            // Handle specific sites
+            if (url.includes('now.gg')) {
+                url = 'https://nowgg.nl';
+                showMessage('Redirecting to Now.gg alternative...');
+            }
+            
+            // Save to history (unless incognito mode)
+            if (!settings.incognito) {
+                let history = JSON.parse(sessionStorage.getItem('proxy_history') || '[]');
+                history.push({url, timestamp: new Date().toISOString()});
+                if (history.length > 50) history.shift();
+                sessionStorage.setItem('proxy_history', JSON.stringify(history));
+            }
+            
+            // Handle based on opening method setting
+            switch(settings.openMethod) {
+                case 'aboutblank':
+                    // Open in about:blank
+                    const newWindow = window.open('about:blank', '_blank');
+                    const iframe = document.createElement('iframe');
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.border = 'none';
+                    iframe.src = url;
+                    newWindow.document.body.appendChild(iframe);
+                    showMessage('Opening in new window...');
+                    break;
+                    
+                case 'newtab':
+                    // Open in new tab
+                    window.open(url, '_blank');
+                    showMessage('Opening in new tab...');
+                    break;
+                    
+                case 'popup':
+                    // Open in popup window
+                    const popup = window.open(url, 'UnblockedHub', 'width=1200,height=800,location=no,menubar=no,toolbar=no');
+                    if (popup) {
+                        showMessage('Opening in popup window...');
+                    } else {
+                        // If popup blocked, open in embedded proxy
+                        openEmbeddedProxy(url);
+                    }
+                    break;
+                    
+                default:
+                    // Default: embed in page
+                    openEmbeddedProxy(url);
+                    break;
+            }
+        }
+
+        // Open URL in embedded proxy
+        function openEmbeddedProxy(url) {
+            hideAllContent();
+            document.getElementById('proxyFrameContainer').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('proxyFrame').src = url;
+            showMessage('Loading in proxy...');
+        }
+
+        // Close proxy view
+        function closeProxy() {
+            document.getElementById('proxyFrameContainer').style.display = 'none';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('proxyFrame').src = '';
+            showHome();
+        }
+
+        // Handle search
+        function handleSearch(event) {
+            event.preventDefault();
+            const query = document.getElementById('searchinput').value.trim();
+            if (!query) return;
+            
+            if (isUrl(query)) {
+                // It's a URL
+                openInProxy(query);
+            } else {
+                // It's a search query
+                const searchUrl = searchEngines[settings.searchEngine] + encodeURIComponent(query);
+                openInProxy(searchUrl);
+            }
+            
+            document.getElementById('searchinput').value = '';
+        }
+
+        // Handle proxy form
+        function handleProxy(event) {
+            event.preventDefault();
+            const url = document.getElementById('proxyinput').value.trim();
+            if (url) {
+                openInProxy(url);
+                document.getElementById('proxyinput').value = '';
+            }
+        }
+
+        // Check if string is URL
+        function isUrl(string) {
+            if (/^http(s?):\/\//.test(string) || (string.includes('.') && string.slice(0, 1) !== ' ')) {
+                return true;
+            }
+            return false;
+        }
+
+        // Show sections
+        function hideAllContent() {
+            document.getElementById('gamesGrid').style.display = 'none';
+            document.getElementById('appsGrid').style.display = 'none';
+            document.getElementById('proxyInput').style.display = 'none';
+        }
+
+        function showHome() {
+            closeProxy();
+            hideAllContent();
+            showMessage('Welcome to UnblockedHub!');
+        }
+
+        function showGames() {
+            hideAllContent();
+            document.getElementById('gamesGrid').style.display = 'block';
+        }
+
+        function showApps() {
+            hideAllContent();
+            document.getElementById('appsGrid').style.display = 'block';
+        }
+
+        function showProxy() {
+            hideAllContent();
+            document.getElementById('proxyInput').style.display = 'block';
+            document.getElementById('proxyinput').focus();
+        }
+
+        // Settings modal
+        function showSettingsModal() {
+            loadSettings();
+            document.getElementById('settingsModal').style.display = 'flex';
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        // Message system
+        function showMessage(text) {
+            // Create message box if it doesn't exist
+            let messageBox = document.getElementById('messageBox');
+            if (!messageBox) {
+                messageBox = document.createElement('div');
+                messageBox.id = 'messageBox';
+                messageBox.style.position = 'fixed';
+                messageBox.style.top = '70px';
+                messageBox.style.right = '20px';
+                messageBox.style.background = '#111';
+                messageBox.style.border = '1px solid #333';
+                messageBox.style.padding = '15px';
+                messageBox.style.borderRadius = '10px';
+                messageBox.style.maxWidth = '300px';
+                messageBox.style.zIndex = '1001';
+                document.body.appendChild(messageBox);
+            }
+            
+            messageBox.textContent = text;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        }
+
+        // Loading screen
+        function skipLoading() {
+            document.getElementById('loading-screen').classList.add('fade-out');
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.display = 'none';
+            }, 500);
+        }
+
+        // Initialize
+        window.onload = function() {
+            // Load settings
+            loadSettings();
+            
+            // Auto-hide loading screen after 2 seconds
+            setTimeout(skipLoading, 2000);
+            
+            // Auto-show skip button after 5 seconds
+            setTimeout(() => {
+                document.getElementById('dabottom').style.display = 'block';
+            }, 5000);
+            
+            // Update online users
+            setInterval(() => {
+                const users = 1 + Math.floor(Math.random() * 50);
+                document.getElementById('online').textContent = 'online users: ' + users;
+            }, 10000);
+            
+            // Handle Enter key
+            document.getElementById('searchinput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') handleSearch(e);
+            });
+            
+            document.getElementById('proxyinput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') handleProxy(e);
+            });
+            
+            // Input placeholder handling
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.dataset.placeholder = this.placeholder;
+                    this.placeholder = '';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.placeholder = this.dataset.placeholder;
+                });
+            });
+            
+            // Auto-load games if setting is enabled
+            if (settings.autoLoadGames) {
+                setTimeout(() => {
+                    showGames();
+                }, 100);
+            }
+            
+            // Clear history on close if setting is enabled
+            if (settings.clearHistory) {
+                window.addEventListener('beforeunload', function() {
+                    sessionStorage.clear();
+                });
+            }
+        };
+    </script>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-UNBLOCKEDHUB"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-UNBLOCKEDHUB');
+    </script>
+
+    <!-- Ad Script -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-UNBLOCKEDHUB123"
+            crossorigin="anonymous"></script>
+</body>
+</html>
